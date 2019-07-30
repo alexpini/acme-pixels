@@ -26,6 +26,72 @@
       display: flex;
     }
 
+    .blue {
+        background-color: blue;
+    }
+
+    #red {
+        background-color: red;
+        width: 1rem;
+        height: 1rem;
+        border: solid 0.5px black;
+    }
+
+    #dark-blue {
+        background-color: darkblue;
+        width: 1rem;
+        height: 1rem;
+        border: solid 0.5px black;
+    }
+
+    #green {
+        background-color: green;
+        width: 1rem;
+        height: 1rem;
+        border: solid 0.5px black;
+    }
+
+    #yellow {
+        background-color: yellow;
+        width: 1rem;
+        height: 1rem;
+        border: solid 0.5px black;
+    }
+
+    #light-blue {
+        background-color: lightblue;
+        width: 1rem;
+        height: 1rem;
+        border: solid 0.5px black;
+    }
+
+    .red {
+        background-color: red;
+    }
+
+    .dark-blue {
+        background-color: darkblue;
+    }
+
+    .green {
+        background-color: green;
+    }
+
+    .yellow {
+        background-color: yellow;
+    }
+
+    .light-blue {
+        background-color: lightblue;
+    }
+
+    .swatches {
+        width: 100px;
+        height: 20px;
+        display: flex;
+        padding: 1rem;
+    }
+
     </style>
 
   </head>
@@ -34,14 +100,21 @@
     <div id='parent'>
     <div id='left'>
       <h2>Controls</h2>
-      <button>Add A Row</button>
-      <button>Remove Row</button>
-      <button>Add A Column</button>
-      <button>Remove Column</button>
+      <button id="addRow">Add A Row</button>
+      <button id="removeRow">Remove Row</button>
+      <button id="addCols">Add A Column</button>
+      <button id="removeCols">Remove Column</button>
+      <div class="swatches">
+        <div id="red"></div>
+        <div id="dark-blue"></div>
+        <div id="green"></div>
+        <div id="yellow"></div>
+        <div id="light-blue"></div>
+      </div>
     </div>
 
-    <div id='right'>
-      <h2>Canvas</h2>
+    <!-- <div id='right'>
+      <h2>Canvas</h2> -->
     <div id='grid'>
       <div class='row'>
         <div class='cell'></div>
@@ -79,51 +152,96 @@
                 <div class='cell'></div>
               </div>
             </div>
-    </div>
+    <!-- </div> -->
   </div>
 
     <script>
-
-      const generateNxN = (n) => {
+      const generateNxN = (n, m) => {
         const rows = [];
         for (let i = 0; i < n; i++) {
           const row = [];
-          for (let j = 0; j < n; j++) {
-            row.push(0);
+          for (let j = 0; j < m; j++) {
+            row.push('');
           }
           rows.push(row);
         }
         return rows;
       }
 
-      const generateHTML = (rows)=> {
-    return rows.map(row =>
-    `<div class='row'>
-      ${ row.map(cell => `div class ='cell'>${ cell }</div>`).join('')}
-      </div>`).join();
-  };
+      // Generate HTML for rows and cols
+        const generateHTML = (rows)=> {
+            return rows.map(row =>
+            `<div class='row'>
+            ${ row.map(cell => `<div class ='cell'>${ cell }</div>`).join('')}
+            </div>`).join('');
+        };
 
-  const data = generateNxN(3);
-  const grid = document.querySelector('#grid');
+        let n = 5
+        let m = 5
+        const data = generateNxN(n, m);
+        const grid = document.querySelector('#grid');
+        let currColor = "blue"
 
-  grid.addEventListener('click', (ev) => {
+        // Change the color of the cell to selected swatch color
+        grid.addEventListener('click', (ev) => {
+            ev.preventDefault()
+            const cell = ev.target;
+            console.log(cell.className)
+            if (cell.className.includes("cell")) {
+                cell.classList.toggle(currColor)
+            }
+        });
 
-    const cell = ev.target;
-    const row = ev.target.parentNode
-    const cdx = [...row.children].indexOf(cell);
-    const rdx = [...row.parentNode.children].indexOf(row);
+        const colorGrid = document.querySelector('.swatches')
 
-    // data[rdx][cdx]++;
-    render();
+        //  Pick the color from swatches
+        colorGrid.addEventListener('click', (ev) => {
+            ev.preventDefault()
+            const color = ev.target;
+            currColor = color.id
+        })
 
-  });
+        // Render the grid
+        const render = (data) => {
+            const html = generateHTML(data);
+            grid.innerHTML = html;
+        };
 
-  const render = () => {
-    const html = generateHTML(data);
-    grid.innerHTML = html;
-  };
-  console.table(data);
+        render(data);
 
+        // Add a row
+        const addRow = document.querySelector('#addRow')
+        addRow.addEventListener('click', (ev) => {
+          ev.preventDefault()
+            n=n+1
+            const newData = generateNxN(n, m)
+            render(newData)
+        })
+
+        // Add a column
+        const addCols = document.querySelector('#addCols')
+        addCols.addEventListener('click', (ev) => {
+          ev.preventDefault()
+            m=m+1
+            const newData = generateNxN(n, m)
+            render(newData)
+        })
+
+        // Remove a row
+        const removeRow = document.querySelector('#removeRow')
+        removeRow.addEventListener('click', (ev) => {
+            n=n-1
+            const newData = generateNxN(n, m)
+            render(newData)
+        })
+
+        // Remove a column
+        const removeCols = document.querySelector('#removeCols')
+        removeCols.addEventListener('click', (ev) => {
+            m=m-1
+            const newData = generateNxN(n, m)
+            render(newData)
+        })
 
 
     </script>
